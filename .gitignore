@@ -50,3 +50,7 @@ graphify-out/
 /GeistPixel-*.ttf
 /OFL.txt
 /README.txt
+
+# Instalación privada del VPS: datos y credenciales generadas.
+/data/
+/.private/
