@@ -39,3 +39,15 @@ Respaldar `data/pocketbase` con un procedimiento consistente para SQLite y guard
 ## Cambio a wotp.ar
 
 Las cinco URL del entorno y del ejemplo usan `https://wotp.ar`. El panel debe reconstruirse porque Next.js incorpora estas URL durante la compilación. El publicador exige la zona activa `wotp.ar` en la cuenta del túnel; mantiene la política privada existente como plantilla. La conexión interna de Mascotas continúa por `http://wotp-gateway:8080/gateway`. La publicación DNS, Access y HTTPS sigue pendiente hasta desbloquear el almacén cifrado en terminal.
+
+## Credencial local para automatización
+
+Para permitir la administración solicitada sin introducir la frase del almacén anterior en cada ejecución:
+
+```bash
+sudo python3 /srv/webs/wotp/deploy/credencial_cloudflare.py
+```
+
+Solicita el correo y la Global API Key con entrada oculta. Cifra los datos en `.private/cloudflare.credentials.enc` (600) y guarda la clave de cifrado en `/etc/wotp/cloudflare-local.key` (600), dentro de carpetas 700. Ambos archivos quedan fuera de Git y de los contenedores. Root puede descifrarlos: esto habilita la automatización, no protege frente a una intrusión con privilegios root. Los permisos efectivos son los de la credencial y la cuenta de Cloudflare.
+
+El publicador utiliza esta credencial automáticamente cuando existe, sin mostrarla. Para comprobar solamente la lectura local, usar `--comprobar`; para cambiarla, `--reemplazar`. El almacén anterior permanece intacto y se puede seleccionar explícitamente con `publicar_cloudflare.py --archivo RUTA`. Eliminar la credencial local impide su uso posterior en esta instalación; revocar la Global API Key en Cloudflare también invalida sus demás copias. Respaldar la credencial cifrada y la clave por separado.
