@@ -29,3 +29,10 @@ class PublicacionProtegidaTests(unittest.TestCase):
     def test_acepta_lista_privada_sin_ampliarla(self):
         politica = [{"decision": "allow", "include": [{"email": {"email": "owner@example.invalid"}}]}]
         self.assertEqual(politica_segura(politica), politica)
+
+    def test_conserva_tambien_las_politicas_de_denegacion(self):
+        politicas = [
+            {"decision": "deny", "precedence": 1, "include": [{"email": {"email": "blocked@example.invalid"}}]},
+            {"decision": "allow", "precedence": 2, "include": [{"email": {"email": "owner@example.invalid"}}]},
+        ]
+        self.assertEqual(politica_segura(politicas), politicas)

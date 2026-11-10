@@ -28,12 +28,12 @@ def todos(valor):
 
 
 def politica_segura(politicas):
-    if any(p.get("decision") in {"bypass", "non_identity"} for p in politicas):
+    if any(p.get("decision") not in {"allow", "deny"} for p in politicas):
         raise DNSError("La aplicación tiene una excepción incompatible con el acceso exclusivo por Google.")
     permitidas = [p for p in politicas if p.get("decision") == "allow"]
     if not permitidas or any(not p.get("include") or todos(p["include"]) for p in permitidas):
         raise DNSError("No se encontró una política con una lista de acceso restringida.")
-    return permitidas
+    return sorted(politicas, key=lambda p: p.get("precedence") or 1)
 
 
 def nueva_configuracion(configuracion):
