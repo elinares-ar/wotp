@@ -21,7 +21,7 @@ La cuenta operadora se autentica en `/login`. `/pb/_/` es la administración de 
 
 ## Publicación protegida pendiente de desbloquear la credencial
 
-Destino propuesto: **https://wotp.pruebas-ia.org**. Se utiliza el túnel `webs` existente y las convenciones documentadas en `/srv/webs/README.md`. Para publicar, ejecutar en una terminal normal:
+Dominio solicitado: **https://wotp.ar**. Se utiliza el túnel `webs` existente y las convenciones documentadas en `/srv/webs/README.md`. Para publicar, ejecutar en una terminal normal:
 
 ```bash
 cd /srv/webs/wotp
@@ -35,3 +35,7 @@ Solicita de forma oculta la frase del almacén cifrado existente en `/root/proye
 Construcción de producción completada. **159 pruebas del backend aprobadas sin red**, con el directorio de pruebas original montado en una imagen temporal. Comprobaciones del frontend: tipos, análisis estático y formato aprobados; se montó su `.gitignore` original porque el Dockerfile de producción lo excluye y los verificadores no deben recorrer dependencias ni resultados generados. Comprobados el panel, los endpoints de salud del proxy y el inicio de sesión de la cuenta operadora sin imprimir el token. Las pruebas de `deploy/test_publicar_cloudflare.py` verifican conservación de rutas y rechazo de políticas públicas sin llamar a Cloudflare.
 
 Respaldar `data/pocketbase` con un procedimiento consistente para SQLite y guardar `.env` y `.private/` como secretos separados. El sistema de respaldo existente del VPS incluye `/srv/webs`; no se presupone una restauración probada de esta instalación nueva. Las futuras credenciales de proveedores cifradas dependen de conservar `WOTP_FERNET_KEY`.
+
+## Cambio a wotp.ar
+
+Las cinco URL del entorno y del ejemplo usan `https://wotp.ar`. El panel debe reconstruirse porque Next.js incorpora estas URL durante la compilación. El publicador exige la zona activa `wotp.ar` en la cuenta del túnel; mantiene la política privada existente como plantilla. La conexión interna de Mascotas continúa por `http://wotp-gateway:8080/gateway`. La publicación DNS, Access y HTTPS sigue pendiente hasta desbloquear el almacén cifrado en terminal.
