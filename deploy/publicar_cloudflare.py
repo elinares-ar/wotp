@@ -11,6 +11,7 @@ from urllib.request import Request, build_opener
 # Reutiliza el lector del almacén cifrado que el propietario ya configuró.
 # No copia, imprime ni persiste el texto descifrado.
 sys.path.insert(0, "/root/proyectos/codex")
+from credencial_cloudflare import ARCHIVO as CREDENCIAL_LOCAL, cargar as cargar_local
 from scripts.cloudflare_dns import CloudflareAPI, DNSError, NoRedirect
 from scripts.cloudflare_vault import DEFAULT_PATH, VaultError, _secret, load_credentials
 
@@ -130,10 +131,13 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__, add_help=False)
     parser._optionals.title = "Opciones"
     parser.add_argument("--ayuda", "-h", "--help", action="help", help="Mostrar esta ayuda y salir.")
-    parser.add_argument("--archivo", type=Path, default=DEFAULT_PATH)
+    parser.add_argument("--archivo", type=Path, help="Usar explícitamente el almacén con frase de paso.")
     args = parser.parse_args()
     try:
-        credenciales = load_credentials(args.archivo, _secret("Frase de paso del almacén de Cloudflare (entrada oculta): "))
+        if args.archivo is None and CREDENCIAL_LOCAL.exists():
+            credenciales = cargar_local()
+        else:
+            credenciales = load_credentials(args.archivo or DEFAULT_PATH, _secret("Frase de paso del almacén de Cloudflare (entrada oculta): "))
         publicar(CloudflareAPI(credenciales))
         verificar_puerta()
         print("Publicado: https://" + DOMINIO)
