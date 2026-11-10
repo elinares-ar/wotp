@@ -14,8 +14,9 @@ sys.path.insert(0, "/root/proyectos/codex")
 from scripts.cloudflare_dns import CloudflareAPI, DNSError, NoRedirect
 from scripts.cloudflare_vault import DEFAULT_PATH, VaultError, _secret, load_credentials
 
-DOMINIO = "wotp.pruebas-ia.org"
-ZONA = "pruebas-ia.org"
+DOMINIO = "wotp.ar"
+ZONA = "wotp.ar"
+PLANTILLA_ACCESS = "*.pruebas-ia.org"
 TUNEL = "671cae54-9c0f-4f88-a9c8-5d227760214e"
 ORIGEN = "http://localhost:8113"
 NOMBRE = "WOTP - Solo Emilio (Google)"
@@ -44,7 +45,7 @@ def nueva_configuracion(configuracion):
     existentes = [r for r in reglas if r.get("hostname") == DOMINIO]
     if existentes:
         if len(existentes) != 1 or existentes[0].get("service") != ORIGEN or existentes[0].get("path"):
-            raise DNSError("El subdominio ya tiene una ruta diferente; no se reemplazó.")
+            raise DNSError("El dominio ya tiene una ruta diferente; no se reemplazó.")
     else:
         reglas.insert(len(reglas) - 1, {"hostname": DOMINIO, "service": ORIGEN, "originRequest": {}})
     return copia
@@ -53,7 +54,7 @@ def nueva_configuracion(configuracion):
 def publicar(api):
     zonas = api.listing("/zones", name=ZONA)
     if len(zonas) != 1 or zonas[0].get("status") != "active":
-        raise DNSError("No se encontró una única zona activa para el subdominio propuesto.")
+        raise DNSError("No se encontró una única zona activa para el dominio solicitado.")
     zona = zonas[0]["id"]
     cuenta = zonas[0]["account"]["id"]
     base = f"/accounts/{cuenta}"
@@ -71,7 +72,7 @@ def publicar(api):
     else:
         plantillas = [a for a in apps if a.get("domain") == "war.petshopnoa.net.ar"]
         if len(plantillas) != 1:
-            plantillas = [a for a in apps if a.get("domain") == "*." + ZONA]
+            plantillas = [a for a in apps if a.get("domain") == PLANTILLA_ACCESS]
         if len(plantillas) != 1:
             raise DNSError("No se pudo identificar la política privada existente para copiar sus usuarios autorizados.")
         originales = api.listing(base + f"/access/apps/{plantillas[0]['id']}/policies")
