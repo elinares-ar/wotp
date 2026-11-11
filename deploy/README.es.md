@@ -17,18 +17,18 @@ cd /srv/webs/wotp
 docker compose --env-file .env -f deploy/compose.vps.yml up -d --build
 ```
 
-La cuenta operadora se autentica en `/login`. `/pb/_/` es la administración de PocketBase; usa la cuenta de superusuario del `.env`, distinta del operador. El acceso de Google será una primera barrera para todo el host, sin excepciones para webhooks mientras no se configure un proveedor.
+La cuenta operadora se autentica en `/login`. `/pb/_/` es la administración de PocketBase; usa la cuenta de superusuario del `.env`, distinta del operador. El acceso de Google es una primera barrera para todo el host, sin excepciones para webhooks mientras no se configure un proveedor.
 
-## Publicación protegida pendiente de desbloquear la credencial
+## Publicación protegida activa
 
-Dominio solicitado: **https://wotp.ar**. Se utiliza el túnel `webs` existente y las convenciones documentadas en `/srv/webs/README.md`. Para publicar, ejecutar en una terminal normal:
+Dominio solicitado: **https://wotp.ar**. Se utiliza el túnel `webs` existente y las convenciones documentadas en `/srv/webs/README.md`. Para volver a comprobar o publicar la configuración:
 
 ```bash
 cd /srv/webs/wotp
 python3 deploy/publicar_cloudflare.py
 ```
 
-Solicita de forma oculta la frase del almacén cifrado existente en `/root/proyectos/codex/.local/cloudflare.credentials.enc`. Reutiliza el lector y cliente API de ese proyecto; no copia el secreto descifrado. Verifica Google y copia los usuarios permitidos de la política privada existente antes de publicar la ruta del túnel y el CNAME. Conserva las otras rutas y se detiene ante conflictos. Finalmente comprueba que una petición HTTPS sin sesión termine en el inicio de sesión de Access. Si falla una operación, puede haber recursos parciales; no se borran aplicaciones ajenas. La política de acceso y HTTPS públicos todavía no se afirman comprobados hasta ejecutar este paso.
+Utiliza la credencial local cifrada cuando está configurada. Como alternativa, solicita de forma oculta la frase del almacén anterior en `/root/proyectos/codex/.local/cloudflare.credentials.enc`. Reutiliza el cliente API del proyecto; no imprime credenciales. Verifica Google y copia los usuarios permitidos de la política privada existente antes de publicar la ruta del túnel y el CNAME. Conserva las otras rutas y se detiene ante conflictos. Finalmente comprueba que una petición HTTPS sin sesión termine en el inicio de sesión de Access. Si falla una operación, puede haber recursos parciales; no se borran aplicaciones ajenas. El 11 de noviembre de 2026 se publicaron y verificaron mediante API el CNAME con proxy, la ruta del túnel y la aplicación de Access con Google y política privada. Una consulta DNS pública devolvió direcciones de Cloudflare. HTTPS, con certificado validado y resolución explícita a una de esas direcciones, respondió 302 al inicio de sesión de Cloudflare Access. El resolvedor local del VPS todavía conservaba una respuesta negativa; la prueba HTTPS no dependió de esa caché. No se realizó un inicio de sesión interactivo de Google.
 
 ## Verificación
 
@@ -38,7 +38,7 @@ Respaldar `data/pocketbase` con un procedimiento consistente para SQLite y guard
 
 ## Cambio a wotp.ar
 
-Las cinco URL del entorno y del ejemplo usan `https://wotp.ar`. El panel debe reconstruirse porque Next.js incorpora estas URL durante la compilación. El publicador exige la zona activa `wotp.ar` en la cuenta del túnel; mantiene la política privada existente como plantilla. La conexión interna de Mascotas continúa por `http://wotp-gateway:8080/gateway`. La publicación DNS, Access y HTTPS sigue pendiente hasta desbloquear el almacén cifrado en terminal.
+Las cinco URL del entorno y del ejemplo usan `https://wotp.ar`. El panel debe reconstruirse porque Next.js incorpora estas URL durante la compilación. El publicador exige la zona activa `wotp.ar` en la cuenta del túnel; mantiene la política privada existente como plantilla. La conexión interna de Mascotas continúa por `http://wotp-gateway:8080/gateway`. DNS, Access y HTTPS publicados y comprobados el 11 de noviembre de 2026 según el procedimiento descrito arriba.
 
 ## Credencial local para automatización
 
